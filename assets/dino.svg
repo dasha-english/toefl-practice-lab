@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 196" role="img" aria-labelledby="dino-title">
+  <title id="dino-title">A friendly green dinosaur reading a book</title>
+  <!-- A vector redraw of the book-loving green mascot so it stays sharp on Retina displays. -->
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- spines -->
+    <g fill="#746e5d" stroke="#746e5d" stroke-width="2">
+      <path d="M66 46C51 25 33 24 21 33c-6 8 3 18 29 22Z"/>
+      <path d="M54 60C34 50 18 55 15 69c-2 12 13 17 37 12Z"/>
+      <path d="M54 84c-20-1-29 10-23 24 5 9 17 9 31 3Z"/>
+      <path d="M66 106c-16 5-22 17-14 26 6 7 14 5 23-2Z"/>
+      <path d="M56 138c-13-4-24 0-25 12 8 10 18 10 28 4Z"/>
+    </g>
+    <!-- tail and trunk -->
+    <path d="M71 142c-13 10-31 13-43 4-12-8-16-20-16-32 0-7 4-11 7-7 4 18 11 27 22 22 13-6 19-18 21-30-10-12-15-24-13-36 2-18 12-34 28-41 15-7 30-5 42 3 16-10 35-8 47 5 11 12 16 30 9 46-7 16-20 22-39 27-20 6-31 14-34 33l-5 24H57Z" fill="#a9ae91" stroke="#35372d" stroke-width="3"/>
+    <!-- pale muzzle, throat and belly -->
+    <path d="M90 91c12-11 21-9 30-6 18 8 31 7 46-4-5 12-17 16-32 22-15 6-26 11-28 26-1 12-1 21-10 32-7 0-14 0-19-1 6-12 12-30 9-44-2-11-1-18 4-25Z" fill="#e7ddc4"/>
+    <!-- upper head definition and muzzle smile -->
+    <path d="M124 26c19-5 32-1 42 9 13 14 17 37 4 51-11 12-30 14-48 11" stroke="#4d4b3d" stroke-width="2" fill="none"/>
+    <path d="M129 97c18 3 32-2 40-11" fill="none" stroke="#49483c" stroke-width="2.1"/>
+    <!-- eye -->
+    <path d="M66 53c8-11 23-16 34-15 8 12 3 28-7 35-9 7-22 4-27-4-3-5-3-10 0-16Z" fill="#f9f7ee" stroke="#33362d" stroke-width="2.5"/>
+    <path d="M83 42c5-1 10 0 13 2 2 7 0 15-7 18-6 1-9-5-9-10 0-4 1-7 3-10Z" fill="#1a1d1a"/>
+    <path d="M62 54c8-8 18-13 37-16" fill="none" stroke="#1c211d" stroke-width="5"/>
+    <!-- nostrils -->
+    <ellipse cx="146" cy="52" rx="2.2" ry="4.2" transform="rotate(-27 146 52)" fill="#262b21"/>
+    <ellipse cx="165" cy="44" rx="2.5" ry="4.5" transform="rotate(-19 165 44)" fill="#262b21"/>
+    <!-- two expressively raised eyebrow wisps -->
+    <path d="M64 31C62 17 70 9 80 6" fill="none" stroke="#151a19" stroke-width="5"/>
+    <path d="M83 12C89 6 100 8 105 15" fill="none" stroke="#151a19" stroke-width="5"/>
+    <!-- arm behind book -->
+    <path d="M94 127c-8 1-11 7-9 15 2 9 10 11 19 11l10-13" fill="#a9ae91" stroke="#30372b" stroke-width="3"/>
+    <!-- book body and cream pages -->
+    <g transform="rotate(14 123 143)">
+      <path d="M109 118h36c3 0 5 3 5 6v44c0 3-2 5-5 5h-36c-3 0-5-2-5-5v-44c0-4 2-6 5-6Z" fill="#333a3c" stroke="#24282a" stroke-width="3"/>
+      <path d="M109 118h35c3 0 4 2 4 6v5h-39c-4 0-6-2-6-5 0-3 2-6 6-6Z" fill="#f1e8c9" stroke="#2b2c28" stroke-width="2"/>
+      <path d="M111 120h31m-31 4h31" stroke="#c5b89c" stroke-width="1"/>
+      <path d="M139 131v37" stroke="#515b5f" stroke-width="1.5"/>
+    </g>
+    <!-- front claw cuddling the book -->
+    <path d="M88 134c6-10 15-11 19-4 2 3 1 7-2 10 2 6-2 13-9 17-9 5-19 1-22-8" fill="#a9ae91" stroke="#32362d" stroke-width="3"/>
+    <path d="M131 150c7-6 13-3 13 2 4 2 4 7 0 10 1 5-3 8-9 9-6 0-11-4-10-9 0-5 3-9 6-12Z" fill="#a9ae91" stroke="#32362d" stroke-width="2.5"/>
+    <path d="M130 159l6 1m-4 6 5-1" stroke="#4b5143" stroke-width="1.6"/>
+    <!-- tiny toe at bottom -->
+    <path d="M58 161c17 5 31 4 41-2" stroke="#464c3a" stroke-width="2.5" fill="none"/>
+  </g>
+</svg>
