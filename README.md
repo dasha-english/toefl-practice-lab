@@ -21,3 +21,4 @@ Deploy this directory as a static site using Cloudflare Pages, Netlify, or simil
 
 ## Content editing
 Edit lab listings in `labs/*.html`. Trainer code is kept intact in `trainers/*.html` until each is reviewed.
+Homepage recovery preview test.
