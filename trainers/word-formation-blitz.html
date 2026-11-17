@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A two-minute academic English word formation challenge with instant explanations.">
+<title>Word Formation Blitz | Dasha English</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#17304c;--blue:#276fb0;--muted:#526983;--line:#ccdceb;--pale:#f3f8fc;--good:#286447;--bad:#8c3545}
+*{box-sizing:border-box}body{margin:0;background:var(--pale);font:16px/1.55 Inter,system-ui,sans-serif;color:var(--ink)}
+a{color:inherit}.top{background:white;border-bottom:1px solid var(--line)}.top-inner{max-width:930px;margin:auto;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.brand{font-size:15px;font-weight:850;letter-spacing:-.025em;text-decoration:none}.brand span{color:var(--blue)}
+.top nav{display:flex;gap:15px;font-size:13px;color:var(--muted);font-weight:700}.top nav a{text-decoration:none}.top nav a:hover{text-decoration:underline}
+main{max-width:760px;padding:40px 18px 65px;margin:auto}.panel{background:#fff;padding:37px;border:1px solid #d7e3ef;border-radius:22px;box-shadow:0 14px 34px #163a5f0d}
+.eyebrow{font-size:12px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin:0 0 13px}
+h1{font-size:clamp(31px,5vw,46px);line-height:1.12;letter-spacing:-.05em;margin:0 0 17px}h2{font-size:25px;line-height:1.25;letter-spacing:-.035em;margin:0 0 16px}
+.lead{font-size:16px;color:var(--muted);max-width:560px;margin:0 0 24px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+button{font:inherit;cursor:pointer}.btn{border:1px solid #255d93;background:var(--blue);color:white;padding:13px 19px;border-radius:11px;font-weight:750}
+.btn:hover{background:#1c568d}.btn.secondary{background:white;color:var(--blue);border-color:#b5cde4}.btn.secondary:hover{background:#edf5fc}
+.small{font-size:13px;color:var(--muted)}.progress-row{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:14px;font-weight:750;margin:0 0 15px}
+.progress{height:8px;overflow:hidden;background:#e9f1f8;border-radius:20px;margin-bottom:35px}.progress-fill{height:100%;background:var(--blue);transition:width .2s}
+.sentence{font-size:clamp(21px,3.5vw,27px);line-height:1.5;font-weight:650;letter-spacing:-.02em;margin:22px 0 24px}.gap{color:var(--blue);letter-spacing:.08em}
+.options{display:grid;grid-template-columns:1fr;gap:10px}.option{padding:14px 17px;text-align:left;border:1px solid #c6d8e7;border-radius:11px;background:white;font-size:16px;color:var(--ink)}
+.option:not(:disabled):hover{border-color:#4b8bbd;background:#f0f7fd}.option:disabled{cursor:default}.option.correct{background:#eaf7f0;border-color:#7ac1a0;color:var(--good);font-weight:750}.option.wrong{background:#fcf1f1;border-color:#d5a4ac;color:var(--bad)}
+.feedback{margin-top:20px;padding:15px 18px;background:#eef6fb;border-radius:12px;font-size:14px;color:var(--ink)}.feedback strong{display:block;margin-bottom:4px}.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:23px 0}
+.stat{padding:18px;background:#eef5fb;border-radius:14px}.stat strong{font-size:28px;display:block}.stat span{font-size:13px;color:var(--muted)}.review{border-top:1px solid #dce6ed;padding-top:23px;margin-top:30px}.review-item{border-bottom:1px solid #e6eef4;padding:13px 0;font-size:14px}.review-item strong{color:var(--good)}
+a:focus-visible,button:focus-visible{outline:3px solid #236da8;outline-offset:3px}
+@media(max-width:550px){.panel{padding:24px 20px}.top-inner{padding:15px 16px}.top nav{gap:9px;font-size:11px}.brand{font-size:13px}main{padding-top:24px}.results{grid-template-columns:1fr 1fr}.btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header class="top"><div class="top-inner"><a class="brand" href="../index.html">dasha<span>english.</span> / Practice Lab</a><nav aria-label="Site navigation"><a href="../skill-builders.html">← Skill Builders</a><a href="../services.html">Work with Dasha</a></nav></div></header>
+<main id="app"><div class="panel"><p class="eyebrow">Skill Builders / Vocabulary</p><h1>Word Formation Blitz.</h1><p class="lead">Choose the correct form of an academic word to complete each sentence. Ten questions, quick feedback and explanations.</p>
+<div class="actions"><button class="btn" id="timed">2-minute challenge →</button><button class="btn secondary" id="untimed">Practise without a timer</button></div></div></main>
+<script>
+(()=>{
+'use strict';
+const bank=[
+{stem:"Researchers must provide a detailed ___ of their methods.",opts:["description","descriptive","describe"],key:"description",why:"After the adjective ‘detailed’, we need the noun ‘description’."},
+{stem:"The professor praised the student's ___ approach to the problem.",opts:["create","creative","creation"],key:"creative",why:"An adjective is needed before ‘approach’: creative."},
+{stem:"The article offers a useful ___ between two theories.",opts:["compare","comparison","comparative"],key:"comparison",why:"The noun ‘comparison’ follows ‘a useful’."},
+{stem:"The policy aims to increase student ___ in campus activities.",opts:["participation","participate","participatory"],key:"participation",why:"‘Increase’ takes a noun as its object here: participation."},
+{stem:"The results were largely ___ with previous findings.",opts:["consistency","consistent","consistently"],key:"consistent",why:"After the linking verb ‘were’, use the adjective ‘consistent’."},
+{stem:"Her explanation was both clear and ___.",opts:["logic","logically","logical"],key:"logical",why:"‘Logical’ is an adjective parallel to ‘clear’."},
+{stem:"Recent studies highlight the ___ of sleep for memory.",opts:["important","importance","importantly"],key:"importance",why:"The article ‘the’ is followed here by the noun ‘importance’."},
+{stem:"The committee requested additional ___ before making its decision.",opts:["inform","information","informative"],key:"information",why:"‘Information’ is a noun after ‘additional’."},
+{stem:"The new process improved the ___ of data collection.",opts:["efficient","efficiently","efficiency"],key:"efficiency",why:"We need the noun ‘efficiency’ after ‘the’."},
+{stem:"Independent study can help students develop greater ___.",opts:["confidence","confident","confidently"],key:"confidence",why:"‘Develop’ takes a noun as its object: confidence."},
+{stem:"New evidence led to a ___ of the original hypothesis.",opts:["revise","revised","revision"],key:"revision",why:"The noun ‘revision’ follows the article ‘a’."},
+{stem:"The experiment produced a ___ improvement in accuracy.",opts:["significant","significance","significantly"],key:"significant",why:"Before a noun (‘improvement’), use the adjective ‘significant’."},
+{stem:"The researchers wanted to ___ the impact of the new policy.",opts:["analysis","analyze","analytical"],key:"analyze",why:"After ‘to’, the sentence requires the base verb ‘analyze’."},
+{stem:"Students should evaluate sources ___ before citing them.",opts:["critical","criticism","critically"],key:"critically",why:"An adverb modifies the verb ‘evaluate’: critically."},
+{stem:"Access to scholarships can increase social ___.",opts:["mobility","mobile","mobilize"],key:"mobility",why:"The noun ‘mobility’ completes the phrase ‘social mobility’."}
+];
+const app=document.getElementById("app");const bestKey="dasha-wordformation-blitz-best-v1";
+let pool=[],answers=[],pos=0,mode="practice",deadline=0,tick=null,locked=false;
+function shuffle(a){const out=[...a];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
+function stopClock(){if(tick!==null){clearInterval(tick);tick=null}}
+function best(){try{return Number(localStorage.getItem(bestKey))||0}catch(e){return 0}}
+function setBest(n){try{localStorage.setItem(bestKey,String(Math.max(n,best())))}catch(e){}}
+function start(m,questions){stopClock();mode=m;pool=questions||shuffle(bank).slice(0,10);answers=[];pos=0;locked=false;deadline=mode==="timed"?Date.now()+120000:0;render();if(mode==="timed")tick=setInterval(updateClock,200)}
+function updateClock(){if(!deadline)return;const left=Math.max(0,Math.ceil((deadline-Date.now())/1000));const el=document.getElementById("clock");if(el)el.textContent=Math.floor(left/60)+":"+String(left%60).padStart(2,"0");if(left===0)finish()}
+function render(){if(pos>=pool.length){finish();return}locked=false;const q=pool[pos];const options=shuffle(q.opts);
+app.innerHTML='<div class="panel"><div class="progress-row"><span>Question '+(pos+1)+' of '+pool.length+'</span><span id="clock">'+(mode==="timed"?'2:00':'Untimed')+'</span></div><div class="progress"><div class="progress-fill" style="width:'+(pos/pool.length*100)+'%"></div></div><p class="eyebrow">Choose the correct word form</p><p class="sentence">'+q.stem.replace('___','<span class="gap">_____</span>')+'</p><div class="options" id="options"></div><div id="feedback" role="status" aria-live="polite"></div></div>';
+const optionsEl=document.getElementById("options");
+for(const word of options){const btn=document.createElement("button");btn.type="button";btn.className="option";btn.textContent=word;btn.addEventListener("click",()=>choose(word));optionsEl.appendChild(btn)}updateClock()}
+function choose(word){if(locked)return;locked=true;const q=pool[pos],correct=word===q.key;answers.push({q,chosen:word,correct});
+for(const btn of document.querySelectorAll(".option")){btn.disabled=true;if(btn.textContent===q.key)btn.classList.add("correct");else if(btn.textContent===word)btn.classList.add("wrong")}
+const f=document.getElementById("feedback");f.className="feedback";f.innerHTML='<strong>'+(correct?'Correct!':'The correct answer is: '+q.key)+'</strong><span>'+q.why+'</span><div class="actions"><button class="btn" id="next">'+(pos===pool.length-1?'See results →':'Next →')+'</button></div>';document.getElementById("next").addEventListener("click",()=>{pos++;render()});document.getElementById("next").focus()}
+function finish(){stopClock();if(!pool.length)return;const correct=answers.filter(a=>a.correct).length,total=pool.length,missed=answers.filter(a=>!a.correct);setBest(correct);
+app.innerHTML='<div class="panel"><p class="eyebrow">Your results</p><h1>Nice work.</h1><p class="lead">Review your answers and try another short round whenever you are ready.</p><div class="results"><div class="stat"><strong>'+correct+' / '+total+'</strong><span>Correct answers</span></div><div class="stat"><strong>'+best()+' / 10</strong><span>Best score on this device</span></div></div><div class="actions"><button class="btn" id="restart">Try another round →</button>'+(missed.length?'<button class="btn secondary" id="retry">Retry missed questions</button>':'')+'</div><div class="review" id="review"><h2>Answer review</h2></div><p class="small">Scores are kept only in this browser. They are not official test scores.</p></div>';
+document.getElementById("restart").addEventListener("click",()=>start(mode));
+if(missed.length)document.getElementById("retry").addEventListener("click",()=>start("practice",missed.map(a=>a.q)));
+const review=document.getElementById("review");if(!answers.length){const p=document.createElement("p");p.textContent="Time ran out before the first answer. Try again!";review.appendChild(p)}
+for(const a of answers){const div=document.createElement("div");div.className="review-item";const stem=document.createElement("div");stem.textContent=a.q.stem.replace("___",a.q.key);const note=document.createElement("div");note.textContent=(a.correct?"✓ Correct. ":"Your answer: "+a.chosen+". ")+a.q.why;div.append(stem,note);review.appendChild(div)}
+if(answers.length<total){const p=document.createElement("p");p.className="small";p.textContent=(total-answers.length)+" questions unanswered when time expired.";review.appendChild(p)}}
+document.getElementById("timed").addEventListener("click",()=>start("timed"));
+document.getElementById("untimed").addEventListener("click",()=>start("practice"));
+})();
+</script></body></html>
