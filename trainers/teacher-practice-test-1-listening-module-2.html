@@ -405,6 +405,11 @@ function renderRecordingMap() {
 function renderPracticeQuestion({scene, question}, heard, short) {
   const number = question.number;
   const graded = checked.has(number);
+  const complete = checked.size === byNumber.size;
+  const lastQuestion = number === byNumber.size;
+  const nextNumber = lastQuestion
+    ? [...byNumber.keys()].find(item => !checked.has(item))
+    : number + 1;
   const preview = previewQuestions && !short && !heard
     ? `<section class="question-preview" aria-labelledby="questionPreviewTitle">
         <h2 id="questionPreviewTitle">Questions for this recording</h2>
@@ -428,15 +433,15 @@ function renderPracticeQuestion({scene, question}, heard, short) {
         ${preview}
         ${graded ? `<div class="practice-feedback" role="status">${statusBadge(answerStatus(question))}</div>` : ''}
         ${short || heard ? `<div class="question-side option-list">${choices(question, graded)}</div>` : ''}
-        ${heard && !graded ? button('Check answer', 'check', 'primary', playing || !attempt.answers.has(number)) : ''}
         ${transcriptAvailable ? `<details id="reviewTranscript" ${transcriptOpen ? 'open' : ''}><summary>Transcript</summary><p class="transcript-text">${escape(scene.transcript)}</p></details>` : ''}
       </div></div>
       <div class="practice-actions">
-        <div class="practice-tools">
-          ${button('← Previous', `jump-${number - 1}`, 'secondary', number === 1)}
-          ${button('Next →', `jump-${number + 1}`, 'secondary', number === byNumber.size)}
-        </div>
-        ${button('See results →', 'results', 'secondary')}
+        ${button('← Previous', `jump-${number - 1}`, 'secondary', number === 1)}
+        ${!graded
+          ? button('Check answer', 'check', 'primary', !heard || playing || !attempt.answers.has(number))
+          : complete
+            ? button('See results →', 'results')
+            : button(lastQuestion ? 'Next unchecked question →' : 'Next →', `jump-${nextNumber}`)}
       </div>
     </section></div>`;
 }
