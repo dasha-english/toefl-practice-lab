@@ -1,43 +1,433 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Build a Sentence</title><body style="background:#f5f6f8;padding:25px"><div id="dasha-build-sentence-v3"></div>
+<!doctype html>
+<html lang="en" translate="no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<title>Build a Sentence | Dasha English Practice Lab</title>
+<style>
+  :root{color:#192b2b;background:#f4f7f3;font:17px/1.5 system-ui,sans-serif;--accent:#1b5a45;--line:#d0dfd7;--muted:#455a55}
+  *{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:0 auto;padding:36px 18px 64px}
+  .return-link{display:inline-block;color:var(--accent);font-size:.9rem;margin-bottom:12px}\n  header{margin-bottom:25px}header p{color:var(--accent);font-weight:700;margin:0}
+  h1{font-size:clamp(2rem,6vw,3rem);line-height:1.1;letter-spacing:-.04em;margin:8px 0 0}
+  h2{line-height:1.25;margin:0 0 10px}p{margin:0 0 15px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(15px,4vw,30px)}
+  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:18px}
+  .stack{display:grid;gap:12px;margin:16px 0}.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .spread{justify-content:space-between}.subdued{color:var(--muted)}.small{font-size:.88rem}
+  button,select{font:inherit;color:inherit;background:white;border:1px solid #aabfb3;border-radius:9px;padding:8px 13px;min-height:44px}
+  button{cursor:pointer}button:hover:not(:disabled){background:#e9f2ed}button:disabled{opacity:.46;cursor:default}
+  button.primary{background:var(--accent);color:white;border-color:var(--accent);font-weight:650}
+  button.primary:hover:not(:disabled){background:#134332}
+  button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #448e74;outline-offset:3px}
+  select{max-width:100%;width:100%}label{display:block;font-weight:650}label + select{margin-top:4px}
+  #clock{font-variant-numeric:tabular-nums;font-weight:700}#clock.over{color:#953d19}
+  #numbers button{min-width:42px;padding:4px 8px}#numbers button.done{background:#edf5ed}
+  #numbers button[aria-current]{outline:2px solid var(--accent);outline-offset:-2px;font-weight:750}
+  .prompt{background:#eef4f0;padding:14px 16px;border-radius:10px;margin:12px 0 16px}
+  .prompt p{margin:0}.builder{gap:6px;margin:7px 0 20px}
+  .slot{min-width:76px;border-style:dashed;border-color:#659683;color:#225945}
+  .slot.filled{background:#eaf4ed;border-style:solid}.slot[aria-pressed=true]{outline:2px solid var(--accent)}
+  .tile{background:#f6f9f7}.tile[hidden]{display:none}.controls{margin-top:22px}
+  .feedback{border-left:4px solid var(--accent);margin-top:18px;padding:4px 12px}
+  .feedback p:last-child{margin-bottom:0}
+  .results-list{list-style:none;padding:0;margin:0}
+  .results-list li{padding:10px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+  .results-list p{margin:3px 0 0}
+  .result-item-title{font-weight:700}
+  #review{font-size:.94rem}#review h3{font-size:1.05rem;margin:15px 0 6px}
+  #review details{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+  #review summary{cursor:pointer;font-weight:650}
+  #result-note,#share-instruction{margin-bottom:8px}
+  .history{margin-top:16px}
+  .history button{width:100%;text-align:left}
+  .history li:first-child{border-top:0}
+  @media(max-width:450px){main{padding-top:24px}.modes{grid-template-columns:1fr}.controls button{flex:1 1 auto}}
+</style>
+<main>
+  <header><a class="return-link" href="../test-practice.html">← Test Practice</a><p>Dasha English · Practice Lab</p><h1>Build a Sentence</h1></header>
+  <section id="home">
+    <p class="subdued" id="bank-size"></p>
+    <div class="modes">
+      <section class="card" aria-labelledby="practice-title">
+        <h2 id="practice-title">Practice by Grammar</h2>
+        <p>Work on one pattern and check each answer as you go.</p>
+        <div class="stack">
+          <div><label for="practice-kind">Browse by</label><select id="practice-kind"><option value="category">Grammar category</option><option value="test">Source test</option></select></div>
+          <div><label id="group-label" for="group">Grammar category</label><select id="group"></select></div>
+          <div><label for="pace">Pace</label><select id="pace"><option value="untimed">Untimed</option><option value="target">35-second target per question</option></select></div>
+        </div>
+        <button class="primary" id="start-practice">Start practice</button>
+      </section>
+      <section class="card" aria-labelledby="mixed-title">
+        <h2 id="mixed-title">Mixed Tests</h2>
+        <p>Each test has 10 questions and one shared 6-minute timer.</p>
+        <div class="stack"><div><label for="mixed-set">Choose a test</label><select id="mixed-set"></select></div></div>
+        <button class="primary" id="start-mixed">Start mixed test</button>
+      </section>
+    </div>
+    <section class="card history" aria-labelledby="history-title">
+      <h2 id="history-title">Mixed Test History</h2>
+      <p class="subdued small" id="history-note"></p>
+      <ol class="results-list" id="history-items" reversed></ol>
+    </section>
+  </section>
+  <section class="card" id="session" hidden>
+    <div class="row spread"><strong id="position"></strong><span id="clock"></span></div>
+    <nav class="row" id="numbers" aria-label="Jump to question"></nav>
+    <div class="prompt"><p class="small subdued">Speaker A</p><p id="prompt"></p></div>
+    <p class="small subdued">Speaker B</p>
+    <div class="row builder" id="builder" aria-label="Sentence builder"></div>
+    <p class="small subdued">Tap a chunk to fill the next blank, or select a blank first. Tap a filled blank to return its chunk.</p>
+    <div class="row" id="tiles" aria-label="Word bank"></div>
+    <div class="feedback" id="feedback" aria-live="polite" hidden></div>
+    <div class="row controls">
+      <button id="back">Previous</button><button id="clear">Clear</button>
+      <button class="primary" id="check">Check answer</button>
+      <button id="next">Next</button><button id="submit">Finish &amp; review</button>
+      <button id="exit">Home</button>
+    </div>
+  </section>
+  <section class="card" id="review" hidden>
+    <h2 id="result" tabindex="-1"></h2><p id="result-note"></p>
+    <p class="small subdued" id="share-instruction">Take a screenshot of this result and send it to Dasha.</p>
+    <section aria-labelledby="mistakes-title">
+      <h3 id="mistakes-title">Mistakes</h3>
+      <p id="no-mistakes" hidden>No incorrect attempts.</p>
+      <ul class="results-list" id="mistakes"></ul>
+    </section>
+    <details id="skipped-review"><summary id="skipped-title"></summary><ul class="results-list" id="skipped"></ul></details>
+    <details id="correct-review"><summary id="correct-title"></summary><ul class="results-list" id="correct-answers"></ul></details>
+    <div class="row controls"><button class="primary" id="again">Try another set</button><button id="review-home">Home</button></div>
+  </section>
+</main>
+<script type="application/json" id="data">{"questions":[{"id":"118-01","test":118,"number":1,"category":"Infinitive","prompt":"Are you planning to participate in the school's charity event this weekend?","answer":"Unfortunately, I have no time to participate.","chunks":["I","no","time","to","participate"],"layout":["Unfortunately,",0,"have",1,2,3,4],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"are you planning to participate in the school's charity event this weekend?\nunfortunately, i have no time to participate."},{"id":"118-02","test":118,"number":2,"category":"Relative clauses","prompt":"Why aren't you participating in the debate?","answer":"The topic they chose does not interest me.","chunks":["the topic","they","chose","does","not","interest","me"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why aren't you participating in the debate?\nthe topic they chose does not interest me."},{"id":"118-03","test":118,"number":3,"category":"Coordination","prompt":"Why didn't you take the bus to campus?","answer":"It was running late and I didn't want to wait.","chunks":["it was running","late and","I","didn’t","want","to","wait"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you take the bus to campus?\nit was running late and i didn't want to wait."},{"id":"118-04","test":118,"number":4,"category":"Present perfect passive","prompt":"Did you hear about the new homework policy?","answer":"No, I haven't been informed about it yet.","chunks":["no,","I","haven’t","been","informed","about it"],"layout":[0,1,2,3,4,5,"yet"],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"did you hear about the new homework policy?\nno, i haven't been informed about it yet."},{"id":"118-05","test":118,"number":5,"category":"Embedded questions","prompt":"I recently joined the new fitness center off campus. Are you still looking for a new gym?","answer":"Can you tell me whether it's crowded in the evenings?","chunks":["you","tell","me","whether it’s","crowded in","the evenings"],"layout":["Can",0,1,2,3,4,5],"punctuation":"?","quality":"inferred","reconstructed":false,"timed":false,"key":"i recently joined the new fitness center off campus. are you still looking for a new gym?\ncan you tell me whether it's crowded in the evenings?"},{"id":"118-06","test":118,"number":6,"category":"Direct questions","prompt":"I'm planning to visit the new museum exhibit after class today.","answer":"What time does it open?","chunks":["what","time","it","open"],"layout":[0,1,"does",2,3],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i'm planning to visit the new museum exhibit after class today.\nwhat time does it open?"},{"id":"118-07","test":118,"number":7,"category":"Direct questions","prompt":"I'm preparing to study abroad next semester.","answer":"Which country offers the best programs?","chunks":["which","country","the","best","programs"],"layout":[0,1,"offers",2,3,4],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i'm preparing to study abroad next semester.\nwhich country offers the best programs?"},{"id":"118-08","test":118,"number":8,"category":"Embedded questions","prompt":"Why did you decide to change your major?","answer":"My advisor and I discussed what my career goals are.","chunks":["my advisor","and I","discussed","what","my","career goals","are"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why did you decide to change your major?\nmy advisor and i discussed what my career goals are."},{"id":"118-09","test":118,"number":9,"category":"Embedded questions","prompt":"I went to the seminar on leadership skills yesterday.","answer":"Do you know if the speaker shared any handouts?","chunks":["do you","know if","the","speaker","shared","any"],"layout":[0,1,2,3,4,5,"handouts"],"punctuation":"?","quality":"inferred","reconstructed":false,"timed":false,"key":"i went to the seminar on leadership skills yesterday.\ndo you know if the speaker shared any handouts?"},{"id":"118-10","test":118,"number":10,"category":"Direct questions","prompt":"I'm preparing for my presentation on Friday.","answer":"Did you practice your speech?","chunks":["Did","you","practice","your","speech"],"layout":[0,1,2,3,4],"punctuation":"?","quality":"source","reconstructed":true,"timed":false,"key":"i'm preparing for my presentation on friday.\ndid you practice your speech?"},{"id":"117-01","test":117,"number":1,"category":"Verb patterns","prompt":"Did you get the approval for your research proposal?","answer":"My professor has been too busy to review the proposal.","chunks":["has","been","too busy","to","review","the","proposal"],"layout":["My professor",0,1,2,3,4,5,6],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"did you get the approval for your research proposal?\nmy professor has been too busy to review the proposal."},{"id":"117-02","test":117,"number":2,"category":"Cause / reason","prompt":"Did you attend the presentation yesterday?","answer":"I could not go because of a previously scheduled class.","chunks":["I","could","not","go","because of","a previously"],"layout":[0,1,2,3,4,5,"scheduled class"],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"did you attend the presentation yesterday?\ni could not go because of a previously scheduled class."},{"id":"117-03","test":117,"number":3,"category":"Embedded questions","prompt":"What did the club advisor say during the meeting?","answer":"He explained why the new policy is being implemented.","chunks":["he","why","the","new","policy","is being implemented"],"layout":[0,"explained",1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"what did the club advisor say during the meeting?\nhe explained why the new policy is being implemented."},{"id":"117-04","test":117,"number":4,"category":"Word order","prompt":"Why didn't you bring the book to class?","answer":"I accidentally left it on the desk in my dorm room.","chunks":["I accidentally","left","it on the","desk in","my dorm","room"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you bring the book to class?\ni accidentally left it on the desk in my dorm room."},{"id":"117-05","test":117,"number":5,"category":"Present perfect","prompt":"Are you planning to attend the annual freshman dance?","answer":"Yes, they have hired a famous DJ.","chunks":["yes,","they","have","hired","a","famous","DJ"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you planning to attend the annual freshman dance?\nyes, they have hired a famous dj."},{"id":"117-06","test":117,"number":6,"category":"Present perfect questions","prompt":"I have to finish my homework before dinner.","answer":"Have you started working on it yet?","chunks":["have","you","started working","on","it"],"layout":[0,1,2,3,4,"yet"],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i have to finish my homework before dinner.\nhave you started working on it yet?"},{"id":"117-07","test":117,"number":7,"category":"Coordination","prompt":"Why didn't you call me back after class?","answer":"My phone battery died and I couldn't find my charger.","chunks":["my phone battery","died and","I","couldn’t","find","my","charger"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you call me back after class?\nmy phone battery died and i couldn't find my charger."},{"id":"117-08","test":117,"number":8,"category":"Relative clauses","prompt":"Have you picked a topic for your presentation?","answer":"I chose a theme that focuses on renewable energy and a sustainable future.","chunks":["I chose","a theme","that","focuses on","renewable","energy","and"],"layout":[0,1,2,3,4,5,6,"a sustainable future"],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"have you picked a topic for your presentation?\ni chose a theme that focuses on renewable energy and a sustainable future."},{"id":"117-09","test":117,"number":9,"category":"Word order","prompt":"Where is the best place to buy fresh produce?","answer":"The market near campus has the freshest produce.","chunks":["the market","campus","has","the freshest","produce"],"layout":[0,"near",1,2,3,4],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"where is the best place to buy fresh produce?\nthe market near campus has the freshest produce."},{"id":"117-10","test":117,"number":10,"category":"Relative clauses","prompt":"Which university are you applying to?","answer":"I'm applying to the university that offers a strong engineering program.","chunks":["I’m applying to","the university","that offers","a strong","engineering","program"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which university are you applying to?\ni'm applying to the university that offers a strong engineering program."},{"id":"10-01","test":10,"number":1,"category":"Obligation","prompt":"Why didn't you go to the class yesterday?","answer":"I had to meet an urgent deadline.","chunks":["I","had","to","meet","an","urgent","deadline"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why didn't you go to the class yesterday?\ni had to meet an urgent deadline."},{"id":"10-02","test":10,"number":2,"category":"Negation","prompt":"Did you submit the assignment on time?","answer":"No, I couldn’t meet the deadline.","chunks":["No,","I","meet","the","deadline"],"layout":[0,1,"couldn’t",2,3,4],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"did you submit the assignment on time?\nno, i couldn't meet the deadline."},{"id":"10-03","test":10,"number":3,"category":"Present perfect","prompt":"Why haven't you returned my call?","answer":"I've been tied up in back-to-back classes.","chunks":["I’ve","been","tied","up","in","back-to-back","classes"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you returned my call?\ni've been tied up in back-to-back classes."},{"id":"10-04","test":10,"number":4,"category":"Embedded questions","prompt":"Where's the best place to eat around campus?","answer":"Can you tell me what type of restaurant you're looking for?","chunks":["can you tell","me","what type","of restaurant","you’re","looking","for"],"layout":[0,1,2,3,4,5,6],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"where's the best place to eat around campus?\ncan you tell me what type of restaurant you're looking for?"},{"id":"10-05","test":10,"number":5,"category":"Relative clauses","prompt":"What time does the class start?","answer":"I'm attending the morning session that begins at 10 a.m.","chunks":["I'm","attending","the","morning","session","that","begins","at","10","a.m"],"layout":[0,1,2,3,4,5,6,7,8,9],"punctuation":".","quality":"rebuilt","reconstructed":true,"timed":false,"key":"what time does the class start?\ni'm attending the morning session that begins at 10 a.m."},{"id":"10-06","test":10,"number":6,"category":"Phrasal verbs","prompt":"Why haven't you replied to my text?","answer":"I was caught up in my biology class.","chunks":["I was","caught","up in","my","biology","class"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why haven't you replied to my text?\ni was caught up in my biology class."},{"id":"10-07","test":10,"number":7,"category":"Embedded questions","prompt":"Who helped you with the decorations for the graduation ceremony?","answer":"I don't know who arranged the flowers.","chunks":["don't","know","who","arranged","the","flowers"],"layout":["I",0,1,2,3,4,5],"punctuation":".","quality":"inferred","reconstructed":true,"timed":false,"key":"who helped you with the decorations for the graduation ceremony?\ni don't know who arranged the flowers."},{"id":"10-08","test":10,"number":8,"category":"Present perfect","prompt":"Why haven't you replied to the email from the registrar's office?","answer":"I haven't had the time to go through my inbox yet.","chunks":["I haven’t had","the time to","go","through","my","inbox","yet"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you replied to the email from the registrar's office?\ni haven't had the time to go through my inbox yet."},{"id":"10-09","test":10,"number":9,"category":"Direct questions","prompt":"Where is the campus bookstore?","answer":"Are you looking for something within walking distance?","chunks":["are you","looking","for","something","within","walking","distance"],"layout":[0,1,2,3,4,5,6],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"where is the campus bookstore?\nare you looking for something within walking distance?"},{"id":"10-10","test":10,"number":10,"category":"Embedded questions","prompt":"Who prepared the presentation?","answer":"I'm not sure who worked on it.","chunks":["I’m","not","sure","who","worked","on it"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"who prepared the presentation?\ni'm not sure who worked on it."},{"id":"11-01","test":11,"number":1,"category":"Embedded questions","prompt":"The science fair last night was very impressive.","answer":"Can you tell me whether it will be held again next year?","chunks":["you tell","me whether","it will be","held again","next","year"],"layout":["Can",0,1,2,3,4,5],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"the science fair last night was very impressive.\ncan you tell me whether it will be held again next year?"},{"id":"11-02","test":11,"number":2,"category":"Direct questions","prompt":"I finished reading the textbook you lent me.","answer":"Can I have it back now?","chunks":["can","I","have","it","back"],"layout":[0,1,2,3,4,"now"],"punctuation":"?","quality":"inferred","reconstructed":false,"timed":false,"key":"i finished reading the textbook you lent me.\ncan i have it back now?"},{"id":"11-03","test":11,"number":3,"category":"Embedded questions","prompt":"I have a job interview scheduled for Monday for a new work-study program.","answer":"Can you tell me whether you prepared your answers in advance?","chunks":["you","tell me","whether you","prepared","your","answers in","advance"],"layout":["Can",0,1,2,3,4,5,6],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i have a job interview scheduled for monday for a new work-study program.\ncan you tell me whether you prepared your answers in advance?"},{"id":"11-04","test":11,"number":4,"category":"Embedded questions","prompt":"What did that student just ask you?","answer":"He wanted to know what topics were covered in our discussion.","chunks":["he","wanted to know","topics","were covered","in","our discussion"],"layout":[0,1,"what",2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"what did that student just ask you?\nhe wanted to know what topics were covered in our discussion."},{"id":"11-05","test":11,"number":5,"category":"Embedded questions","prompt":"The seminar on contemporary literature was fascinating.","answer":"Do you know if they will hold another session soon?","chunks":["do","you","know","if","they","will hold","another session"],"layout":[0,1,2,3,4,5,6,"soon"],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"the seminar on contemporary literature was fascinating.\ndo you know if they will hold another session soon?"},{"id":"11-06","test":11,"number":6,"category":"Present perfect questions","prompt":"I'm thinking about moving off campus next semester.","answer":"Have you found a place to live?","chunks":["you","found","a","place","to live"],"layout":["Have",0,1,2,3,4],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i'm thinking about moving off campus next semester.\nhave you found a place to live?"},{"id":"11-07","test":11,"number":7,"category":"Direct questions","prompt":"I heard you visited the new Art Department exhibit last weekend.","answer":"Did you happen to visit it?","chunks":["you","happen to","visit it"],"layout":["Did",0,1,2],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i heard you visited the new art department exhibit last weekend.\ndid you happen to visit it?"},{"id":"11-08","test":11,"number":8,"category":"Embedded questions","prompt":"When will the English Department meeting start?","answer":"I need to find out when everyone is available to meet.","chunks":["I","need","to find","out","when everyone","is available","to meet"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"when will the english department meeting start?\ni need to find out when everyone is available to meet."},{"id":"11-09","test":11,"number":9,"category":"Relative clauses","prompt":"I've decided to study painting at my university.","answer":"Do you have all the supplies you will need?","chunks":["you","have all","the","supplies","you","will need"],"layout":["Do",0,1,2,3,4,5],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i've decided to study painting at my university.\ndo you have all the supplies you will need?"},{"id":"11-10","test":11,"number":10,"category":"Word order","prompt":"What time does the library close today?","answer":"The library closes at 6 o'clock on Sundays.","chunks":["the","library","closes","at","6 o’clock on","Sundays"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"what time does the library close today?\nthe library closes at 6 o'clock on sundays."},{"id":"12-01","test":12,"number":1,"category":"Verb patterns","prompt":"Why didn't you attend the biology workshop on Tuesday?","answer":"The workshop was supposed to take place but was canceled.","chunks":["the workshop","was","supposed to","take","place","but","was canceled"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why didn't you attend the biology workshop on tuesday?\nthe workshop was supposed to take place but was canceled."},{"id":"12-02","test":12,"number":2,"category":"Past perfect","prompt":"Why didn't you come to the literature symposium yesterday?","answer":"I received the email that had the wrong time listed.","chunks":["I","received","the","email","that","had","the wrong","time listed"],"layout":[0,1,2,3,4,5,6,7],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why didn't you come to the literature symposium yesterday?\ni received the email that had the wrong time listed."},{"id":"12-03","test":12,"number":3,"category":"Word order","prompt":"Were you able to solve the final math problem for the algebra assignment?","answer":"I couldn’t determine the correct solution.","chunks":["I","couldn’t","determine","the","correct","solution"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"were you able to solve the final math problem for the algebra assignment?\ni couldn't determine the correct solution."},{"id":"12-04","test":12,"number":4,"category":"Time clauses","prompt":"Why didn't you read the book I recommended?","answer":"I had to return to the library before I could finish it.","chunks":["I had","to return","to the library","before","I could","finish it"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why didn't you read the book i recommended?\ni had to return to the library before i could finish it."},{"id":"12-05","test":12,"number":5,"category":"Relative clauses","prompt":"Why do you prefer that off-campus park for jogging?","answer":"The park that has the best trails is my favorite.","chunks":["the park","that","has","the best","trails","is my"],"layout":[0,1,2,3,4,5,"favorite"],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"why do you prefer that off-campus park for jogging?\nthe park that has the best trails is my favorite."},{"id":"12-06","test":12,"number":6,"category":"Relative clauses","prompt":"Why did you prefer this study method?","answer":"My tutor recommended the technique that works best for my exams.","chunks":["My tutor","recommended","the technique","that","works","best","for","my exams"],"layout":[0,1,2,3,4,5,6,7],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why did you prefer this study method?\nmy tutor recommended the technique that works best for my exams."},{"id":"12-07","test":12,"number":7,"category":"Relative clauses","prompt":"What's your favorite place to relax?","answer":"The park that is close to campus is my favorite spot.","chunks":["the","park that","is close","to campus","is","my","favorite spot"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"what's your favorite place to relax?\nthe park that is close to campus is my favorite spot."},{"id":"12-08","test":12,"number":8,"category":"Negation","prompt":"Did you enjoy the lecture on modern art?","answer":"I did not recognize my friend at first.","chunks":["I","did","not","recognize","my","friend","at first"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"did you enjoy the lecture on modern art?\ni did not recognize my friend at first."},{"id":"12-09","test":12,"number":9,"category":"Embedded questions","prompt":"I signed up for the fitness class yesterday.","answer":"Can you tell me if the auditorium is available for beginners?","chunks":["you","tell me","if","the auditorium","is available","for beginners"],"layout":["Can",0,1,2,3,4,5],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"i signed up for the fitness class yesterday.\ncan you tell me if the auditorium is available for beginners?"},{"id":"12-10","test":12,"number":10,"category":"Word order","prompt":"What is the best place to get coffee off campus?","answer":"The café that is next to the office towers has the best coffee.","chunks":["the café","that is","next to","the office towers","has the","best coffee"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"what is the best place to get coffee off campus?\nthe café that is next to the office towers has the best coffee."},{"id":"13-01","test":13,"number":1,"category":"Embedded questions","prompt":"I need to study for my final exam next week.","answer":"Do you think that the questions will be difficult?","chunks":["do","you","think","that","the questions","will be","difficult"],"layout":[0,1,2,3,4,5,6],"punctuation":"?","quality":"source","reconstructed":true,"timed":false,"key":"i need to study for my final exam next week.\ndo you think that the questions will be difficult?"},{"id":"13-02","test":13,"number":2,"category":"Word order","prompt":"Why didn't you come to the literature symposium yesterday?","answer":"I received the email that had the wrong time listed.","chunks":["I","received","the","email","that","had","the wrong","time listed"],"layout":[0,1,2,3,4,5,6,7],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why didn't you come to the literature symposium yesterday?\ni received the email that had the wrong time listed."},{"id":"13-03","test":13,"number":3,"category":"Embedded questions","prompt":"Why were you talking with the professor?","answer":"He was curious to find out what types of readings I enjoyed in last semester’s class.","chunks":["He was curious","to find","out","what","types of readings","I","enjoyed","in","last semester’s class"],"layout":[0,1,2,3,4,5,6,7,8],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"why were you talking with the professor?\nhe was curious to find out what types of readings i enjoyed in last semester's class."},{"id":"13-04","test":13,"number":4,"category":"Embedded questions","prompt":"We have a new project starting next week in collaboration with another class.","answer":"Do you know if we needed to prepare a presentation for the kickoff meeting?","chunks":["do you know","if we","needed","to","prepare a","presentation","for","the kickoff meeting"],"layout":[0,1,2,3,4,5,6,7],"punctuation":"?","quality":"source","reconstructed":true,"timed":false,"key":"we have a new project starting next week in collaboration with another class.\ndo you know if we needed to prepare a presentation for the kickoff meeting?"},{"id":"13-05","test":13,"number":5,"category":"Negation","prompt":"Do you think the project will be successful?","answer":"I don't believe we will achieve the desired results.","chunks":["I","don't","believe","we","will","achieve","the","desired","results"],"layout":[0,1,2,3,4,5,6,7,8],"punctuation":".","quality":"source","reconstructed":true,"timed":false,"key":"do you think the project will be successful?\ni don't believe we will achieve the desired results."},{"id":"13-06","test":13,"number":6,"category":"Direct questions","prompt":"There's a career fair in the auditorium tomorrow.","answer":"Is it going to start in the morning or afternoon?","chunks":["is it","going to","start","in","the","morning or"],"layout":[0,1,2,3,4,5,"afternoon"],"punctuation":"?","quality":"inferred","reconstructed":true,"timed":false,"key":"there's a career fair in the auditorium tomorrow.\nis it going to start in the morning or afternoon?"},{"id":"13-07","test":13,"number":7,"category":"Relative clauses","prompt":"Why do you prefer that off-campus park for jogging?","answer":"The park that has the best trails is my favorite.","chunks":["the park","that","has","the best","trails","is my"],"layout":[0,1,2,3,4,5,"favorite"],"punctuation":".","quality":"inferred","reconstructed":false,"timed":false,"key":"why do you prefer that off-campus park for jogging?\nthe park that has the best trails is my favorite."},{"id":"13-08","test":13,"number":8,"category":"Embedded questions","prompt":"The class presentation on renewable energy was very informative.","answer":"Do you know when the next one will be?","chunks":["do you","know when","the next","one will"],"layout":[0,1,2,3,"be"],"punctuation":"?","quality":"inferred","reconstructed":false,"timed":false,"key":"the class presentation on renewable energy was very informative.\ndo you know when the next one will be?"},{"id":"13-09","test":13,"number":9,"category":"Embedded questions","prompt":"What did the professor ask about your thesis?","answer":"He wanted to know how I did my research.","chunks":["wanted","to know","how","I","did","my","research"],"layout":["He",0,1,2,3,4,5,6],"punctuation":".","quality":"inferred","reconstructed":true,"timed":false,"key":"what did the professor ask about your thesis?\nhe wanted to know how i did my research."},{"id":"13-10","test":13,"number":10,"category":"Noun clauses","prompt":"Why did you choose that university?","answer":"My teacher suggested that the school would interest me the most.","chunks":["suggested","that","the school","would","interest","me","the most"],"layout":["My teacher",0,1,2,3,4,5,6],"punctuation":".","quality":"inferred","reconstructed":true,"timed":false,"key":"why did you choose that university?\nmy teacher suggested that the school would interest me the most."},{"id":"20-01","test":20,"number":1,"category":"Relative clauses","prompt":"Which city did you visit during your school break?","answer":"The city that has the most cultural attractions was my first choice.","chunks":["the city","that has","the most","cultural attractions","was my","first","choice"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which city did you visit during your school break?\nthe city that has the most cultural attractions was my first choice."},{"id":"20-02","test":20,"number":2,"category":"Relative clauses","prompt":"Which gym do you prefer?","answer":"The campus gym that has the new equipment is my favorite gym.","chunks":["the","campus gym","that has","the new","equipment is","my","gym"],"layout":[0,1,2,3,4,5,"favorite",6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which gym do you prefer?\nthe campus gym that has the new equipment is my favorite gym."},{"id":"20-03","test":20,"number":3,"category":"Relative clauses","prompt":"Why haven't you finished your assignment yet?","answer":"The book I need for reference is still checked out.","chunks":["the book","I","need for","reference","is still","checked","out"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you finished your assignment yet?\nthe book i need for reference is still checked out."},{"id":"20-04","test":20,"number":4,"category":"Embedded questions","prompt":"The seminar on digital marketing was really insightful.","answer":"Do you know if there will be a follow-up session?","chunks":["you","know","if there","will be","a follow-up","session"],"layout":["Do",0,1,2,3,4,5],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"the seminar on digital marketing was really insightful.\ndo you know if there will be a follow-up session?"},{"id":"20-05","test":20,"number":5,"category":"Relative clauses","prompt":"Which laptop are you planning to buy?","answer":"The one that has the fastest processor will fit my needs perfectly.","chunks":["the one","that","has","the fastest","processor will fit","my needs"],"layout":[0,1,2,3,4,5,"perfectly"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which laptop are you planning to buy?\nthe one that has the fastest processor will fit my needs perfectly."},{"id":"20-06","test":20,"number":6,"category":"Embedded questions","prompt":"I heard there will be a meeting next week for the student interns.","answer":"Do you know if the meeting is mandatory for everyone?","chunks":["do you","know","if","the meeting","is mandatory","for"],"layout":[0,1,2,3,4,5,"everyone"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i heard there will be a meeting next week for the student interns.\ndo you know if the meeting is mandatory for everyone?"},{"id":"20-07","test":20,"number":7,"category":"Embedded questions","prompt":"The workshop on time management was very helpful.","answer":"Do you know if there will be another session next month?","chunks":["do","you","know","if there","will be","another session"],"layout":[0,1,2,3,4,5,"next month"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"the workshop on time management was very helpful.\ndo you know if there will be another session next month?"},{"id":"20-08","test":20,"number":8,"category":"Relative clauses","prompt":"Why did you vote for that candidate?","answer":"The one who promised to improve education seemed the most reliable.","chunks":["the one","who","promised to improve","education","seemed"],"layout":[0,1,2,3,4,"the most reliable"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why did you vote for that candidate?\nthe one who promised to improve education seemed the most reliable."},{"id":"20-09","test":20,"number":9,"category":"Relative clauses","prompt":"Why did you move into a new dorm?","answer":"The one I was living in had maintenance issues.","chunks":["the one","I was","living","in","had","maintenance"],"layout":[0,1,2,3,4,5,"issues"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why did you move into a new dorm?\nthe one i was living in had maintenance issues."},{"id":"20-10","test":20,"number":10,"category":"Embedded questions","prompt":"I finally turned in my assignment last night.","answer":"Do you know if the professor has started grading them yet?","chunks":["do you","know","if","the professor","has started grading","them"],"layout":[0,1,2,3,4,5,"yet"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i finally turned in my assignment last night.\ndo you know if the professor has started grading them yet?"},{"id":"22-01","test":22,"number":1,"category":"Verb patterns","prompt":"Why haven't you bought the new school uniform?","answer":"I'm waiting for a better deal.","chunks":["waiting","for","a","better","deal"],"layout":["I'm",0,1,2,3,4],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you bought the new school uniform?\ni'm waiting for a better deal."},{"id":"22-02","test":22,"number":2,"category":"Embedded questions","prompt":"Who inspired you to pursue this major?","answer":"I can't recall who first encouraged me.","chunks":["can't","recall","who","first encouraged","me"],"layout":["I",0,1,2,3,4],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"who inspired you to pursue this major?\ni can't recall who first encouraged me."},{"id":"22-03","test":22,"number":3,"category":"Present perfect","prompt":"Why haven't you visited the new cafe on campus?","answer":"I've been too busy with work lately.","chunks":["been","too busy","with","work lately"],"layout":["I've",0,1,2,3],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you visited the new cafe on campus?\ni've been too busy with work lately."},{"id":"22-04","test":22,"number":4,"category":"Word order","prompt":"Why aren't you attending the chemistry lab today?","answer":"I have a conflicting appointment.","chunks":["have","a","conflicting","appointment"],"layout":["I",0,1,2,3],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why aren't you attending the chemistry lab today?\ni have a conflicting appointment."},{"id":"22-05","test":22,"number":5,"category":"Negation","prompt":"Why didn't you finish your assignment?","answer":"I didn't understand the instructions.","chunks":["didn't","understand","the","instructions"],"layout":["I",0,1,2,3],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you finish your assignment?\ni didn't understand the instructions."},{"id":"22-06","test":22,"number":6,"category":"Direct questions","prompt":"Can you guess where I heard about the seminar?","answer":"Could it have been from a former classmate?","chunks":["could it","have","been","from","a","former"],"layout":[0,1,2,3,4,5,"classmate"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"can you guess where i heard about the seminar?\ncould it have been from a former classmate?"},{"id":"22-07","test":22,"number":7,"category":"Infinitive","prompt":"Did you complete the final project?","answer":"No, I needed more time to finish it.","chunks":["no, I","needed","more","time","finish","it"],"layout":[0,1,2,3,"to",4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"did you complete the final project?\nno, i needed more time to finish it."},{"id":"22-08","test":22,"number":8,"category":"Present perfect","prompt":"Are you going to the university's charity event this weekend?","answer":"No, I have already made other commitments.","chunks":["I","have","made","other","commitments"],"layout":["No,",0,1,"already",2,3,4],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you going to the university's charity event this weekend?\nno, i have already made other commitments."},{"id":"22-09","test":22,"number":9,"category":"Negation","prompt":"Are you going to the class dinner tonight?","answer":"I'm sorry, but I do not have time to attend.","chunks":["I","do","not","have","time","to attend"],"layout":["I'm sorry, but",0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you going to the class dinner tonight?\ni'm sorry, but i do not have time to attend."},{"id":"22-10","test":22,"number":10,"category":"Present perfect questions","prompt":"I need to study for my exams this weekend.","answer":"Have you made a study plan yet?","chunks":["have","you","made","a","study","plan"],"layout":[0,1,2,3,4,5,"yet"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i need to study for my exams this weekend.\nhave you made a study plan yet?"},{"id":"23-01","test":23,"number":1,"category":"Word order","prompt":"Why didn't you attend your morning class?","answer":"I had a doctor's appointment at the same time.","chunks":["I had","a","appointment","at","the","same","time"],"layout":[0,1,"doctor's",2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you attend your morning class?\ni had a doctor's appointment at the same time."},{"id":"23-02","test":23,"number":2,"category":"Relative clauses","prompt":"Why are you studying so late?","answer":"I have an assignment I need to finish by tomorrow morning.","chunks":["I have","an assignment I","to","finish","by","tomorrow","morning"],"layout":[0,1,"need",2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why are you studying so late?\ni have an assignment i need to finish by tomorrow morning."},{"id":"23-03","test":23,"number":3,"category":"Verb patterns","prompt":"Is there any chance that you can finish the class project early?","answer":"No, it's going to take the full amount of time allotted.","chunks":["no,","it's going","to","take","the","full amount","of time"],"layout":[0,1,2,3,4,5,6,"allotted"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"is there any chance that you can finish the class project early?\nno, it's going to take the full amount of time allotted."},{"id":"23-04","test":23,"number":4,"category":"Word order","prompt":"Are you joining us for the debate team practice session?","answer":"No, I have a prior engagement.","chunks":["no,","I","have","a","prior","engagement"],"layout":[0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you joining us for the debate team practice session?\nno, i have a prior engagement."},{"id":"23-05","test":23,"number":5,"category":"Phrasal verbs","prompt":"Why haven't you replied to my text?","answer":"I was caught up in my biology class.","chunks":["I was","caught","up","in","my","biology","class"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you replied to my text?\ni was caught up in my biology class."},{"id":"23-06","test":23,"number":6,"category":"Infinitive","prompt":"Are you planning to buy a new couch for your dorm room?","answer":"No, I'm waiting until their next sale to decide.","chunks":["no, I'm","waiting","until","their","next","sale","to"],"layout":[0,1,2,3,4,5,6,"decide"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you planning to buy a new couch for your dorm room?\nno, i'm waiting until their next sale to decide."},{"id":"23-07","test":23,"number":7,"category":"Embedded questions","prompt":"Who is presenting in class tomorrow?","answer":"I don't know who the speaker is.","chunks":["I","don't","know","who","the speaker"],"layout":[0,1,2,3,4,"is"],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"who is presenting in class tomorrow?\ni don't know who the speaker is."},{"id":"23-08","test":23,"number":8,"category":"Embedded questions","prompt":"Where did you purchase the supplies for class?","answer":"Would you like to know if they offer student discounts?","chunks":["would you","like to","know","if they","offer","student","discounts"],"layout":[0,1,2,3,4,5,6],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"where did you purchase the supplies for class?\nwould you like to know if they offer student discounts?"},{"id":"23-09","test":23,"number":9,"category":"Embedded questions","prompt":"Who is your favorite classmate?","answer":"I can't decide who I like the most.","chunks":["I can't","decide","who","I","like","the","most"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"who is your favorite classmate?\ni can't decide who i like the most."},{"id":"23-10","test":23,"number":10,"category":"Coordination","prompt":"Why didn't you answer your phone?","answer":"I was in a class and couldn't take the call.","chunks":["I was","in","a class","and","couldn't","take","the call"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you answer your phone?\ni was in a class and couldn't take the call."},{"id":"24-01","test":24,"number":1,"category":"Word order","prompt":"Are you planning to join the university's aerobic fitness class?","answer":"No, I prefer my current workout routine.","chunks":["I","prefer","my","current","workout","routine"],"layout":["No,",0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you planning to join the university's aerobic fitness class?\nno, i prefer my current workout routine."},{"id":"24-02","test":24,"number":2,"category":"Relative clauses","prompt":"Why are you not coming to the class picnic?","answer":"I have a prior commitment I can't get out of.","chunks":["I have","a prior","commitment I","can't","get","out","of"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why are you not coming to the class picnic?\ni have a prior commitment i can't get out of."},{"id":"24-03","test":24,"number":3,"category":"Word order","prompt":"Are you going to the university's choral concert this weekend?","answer":"No, I have other plans.","chunks":["I","have","other","plans"],"layout":["No,",0,1,2,3],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you going to the university's choral concert this weekend?\nno, i have other plans."},{"id":"24-04","test":24,"number":4,"category":"Relative clauses","prompt":"Which university did you attend?","answer":"The one known for its engineering program.","chunks":["the","one","known","for","its","engineering","program"],"layout":[0,1,2,3,4,5,6],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which university did you attend?\nthe one known for its engineering program."},{"id":"24-05","test":24,"number":5,"category":"Relative clauses","prompt":"Which course are you taking this semester?","answer":"I'm taking a class that covers advanced statistical methods.","chunks":["I'm taking","a class","that","covers","statistical","methods"],"layout":[0,1,2,3,"advanced",4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"which course are you taking this semester?\ni'm taking a class that covers advanced statistical methods."},{"id":"24-06","test":24,"number":6,"category":"Phrasal verbs","prompt":"Why haven't you visited the university's new art exhibit?","answer":"I've been tied up with other responsibilities.","chunks":["been","tied","up","with","other","responsibilities"],"layout":["I've",0,1,2,3,4,5],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why haven't you visited the university's new art exhibit?\ni've been tied up with other responsibilities."},{"id":"24-07","test":24,"number":7,"category":"Negation","prompt":"Why didn't you go to the campus job fair?","answer":"I wasn't feeling well that evening.","chunks":["I","wasn't","feeling","well","evening"],"layout":[0,1,2,3,"that",4],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"why didn't you go to the campus job fair?\ni wasn't feeling well that evening."},{"id":"24-08","test":24,"number":8,"category":"Embedded questions","prompt":"I love the beautiful flowers they planted in the campus square.","answer":"Can you tell me if they are from a local florist?","chunks":["can you tell","me","if they","are from","a","local"],"layout":[0,1,2,3,4,5,"florist"],"punctuation":"?","quality":"source","reconstructed":false,"timed":true,"key":"i love the beautiful flowers they planted in the campus square.\ncan you tell me if they are from a local florist?"},{"id":"24-09","test":24,"number":9,"category":"Word order","prompt":"Are you planning to study for the exam this weekend?","answer":"No, I have other plans with my family.","chunks":["have","other plans","with","my","family"],"layout":["No, I",0,1,2,3,4],"punctuation":".","quality":"source","reconstructed":false,"timed":true,"key":"are you planning to study for the exam this weekend?\nno, i have other plans with my family."}],"guide":{"Cause / reason":"A cause is expressed with because, because of or a similar construction.","Coordination":"And, but or or connects clauses or other grammatically equal units.","Direct questions":"The target is the word order of the main question.","Embedded questions":"A wh-word, if or whether introduces a question inside a larger clause. Use statement order inside it.","Infinitive":"The target is a to + base verb construction, such as time to participate.","Negation":"The placement or formation of a negative is the main target.","Noun clauses":"A declarative content clause functions as a noun, such as a that-clause after suggest.","Obligation":"The sentence uses a form such as have to to express a requirement.","Past perfect":"Had + past participle places an event before another past point.","Phrasal verbs":"A verb and particle form a unit whose order is central to the item.","Present perfect":"Have or has + past participle is the main target in a statement.","Present perfect passive":"Have or has been + past participle gives the present perfect passive.","Present perfect questions":"The main question uses have or has before the subject followed by a past participle.","Relative clauses":"The clause describes a noun or pronoun, with who, that, which or an omitted object relative pronoun.","Time clauses":"A word such as when, before or after introduces a clause that sets the time.","Verb patterns":"The target is a complement pattern licensed by a specific verb or expression.","Word order":"General placement of words or phrases is the main target."}}</script>
 <script>
-(function(){
-const mount=document.getElementById('dasha-build-sentence-v3');
-if(!mount || mount.shadowRoot)return;
-const root=mount.attachShadow({mode:'open'});
-root.innerHTML=`<style>
-:host{all:initial;display:block}*{box-sizing:border-box}.app{font:14px/1.5 Inter,Arial,sans-serif;color:#243047;background:#fff;border:1px solid #dfe4ec;border-radius:17px;max-width:900px;margin:0 auto;overflow:hidden}button{font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.top{padding:16px 19px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #e8ebf0}.eyebrow{font-size:10px;letter-spacing:1.1px;font-weight:800;color:#78859a}.top h2{font-size:22px;line-height:1.2;letter-spacing:-.65px;margin:3px 0 0}.switch{background:#f1f3f6;border-radius:24px;padding:3px;display:flex;gap:2px}.switch button{border:0;border-radius:22px;background:transparent;padding:8px 13px;font-size:12px;font-weight:750}.switch button.active{background:#243047;color:white}.main{padding:17px 19px 19px}.stats{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;color:#68788e;font-size:12px}.clock{font-weight:850;font-variant-numeric:tabular-nums;color:#26354d;border-radius:8px;padding:6px 10px;background:#f2f5fa}.clock.low{background:#ffebe8;color:#b3483b}.dots{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.dots button{border-radius:50%;border:1px solid #dfe4ec;color:#718097;background:#f4f6f9;width:30px;height:30px;font-size:11px;font-weight:750}.dots button.now{background:#243047;color:white}.dots button.completed:not(.now){background:#e3f2ea;color:#27754c;border-color:#bedfca}.panel{padding:16px;border:1px solid #e1e6ed;background:#f9fafc;border-radius:13px}.instruction{font-size:14px;font-weight:800;margin:0 0 13px}.bubbleRow{display:flex;align-items:flex-start;gap:10px;margin:9px 0}.face{display:flex;align-items:center;justify-content:center;flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:#e6edfa;font-size:25px;line-height:1;box-shadow:inset 0 0 0 1px #d3dfef}.face.two{background:#fcece6;box-shadow:inset 0 0 0 1px #f0d8ce}.bubble{border:1px solid #e1e6ed;background:white;border-radius:10px;padding:9px 12px;min-height:40px;flex:1}.bubble.reply{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.static{font-weight:700;padding:3px 1px}.punct{font-weight:750}.slot{border:1px dashed #9faec2;background:#f0f4f9;border-radius:7px;min-width:51px;min-height:35px;padding:7px 8px;font-size:12px;color:#253248;font-weight:750}.slot.filled{border-style:solid;background:#e7edf7}.slot.target{outline:2px solid #7295c6}.slot.correct{background:#e0f5e9;border-color:#3d9367}.slot.incorrect{background:#ffefea;border-color:#cc7463}.bankhead{margin:13px 0 7px;font-size:10px;font-weight:850;letter-spacing:.7px;color:#687992}.bank{display:flex;flex-wrap:wrap;gap:7px;border:1px solid #e0e5ee;border-radius:10px;background:#eff2f7;padding:10px;min-height:55px}.tile{touch-action:none;background:#fff;border:1px solid #cbd5e2;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:750;color:#243047;min-height:35px}.tile.used{visibility:hidden}.help{font-size:11px;color:#7c899b;margin:9px 0 0}.buttons{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.btn{border-radius:9px;padding:9px 13px;background:white;border:1px solid #d7e0eb;color:#243047;font-weight:750;font-size:12px}.btn.primary{background:#243047;color:white;border-color:#243047}.feedback{margin-top:13px;padding:13px 14px;border:1px solid #e0e6ee;border-radius:10px;background:#f5f7fa;font-size:13px}.feedback p{margin:6px 0}.feedback strong{display:block;margin-bottom:7px}.hidden{display:none!important}.foot{font-size:10px;margin-top:10px;color:#8a97a8}.dragGhost{position:fixed;z-index:9999999;background:white;border:2px solid #6e91cb;border-radius:8px;box-shadow:0 6px 16px #0002;padding:8px 12px;pointer-events:none;font-size:12px;font-weight:750}.intro{padding:16px;background:#f7f8fb;border-radius:12px;border:1px solid #dfe4ec}.intro h3{margin:0 0 8px;font-size:19px}.intro p{margin:7px 0}.results{margin-top:12px;display:grid;gap:7px}.result{border:1px solid #e0e5ee;border-radius:9px;padding:10px 12px;font-size:12px}.result b{display:block;margin-bottom:4px}.warn{color:#b04b3d}@media(max-width:550px){.top{padding:13px}.main{padding:13px}.panel{padding:11px}.top h2{font-size:19px}.face{flex-basis:32px;width:32px;height:32px;font-size:21px}.bubbleRow{gap:7px}.bubble{padding:9px}.slot{min-width:42px;padding:7px 5px}.tile{padding:8px}.switch button{padding:7px 10px}}
-</style><div class="app"><header class="top"><div><div class="eyebrow">DASHA ENGLISH / TOEFL WRITING</div><h2>Build a Sentence</h2></div><div class="switch"><button id="practice" class="active" type="button">Practice</button><button id="exam" type="button">Exam</button></div></header><div class="main"><div class="stats"><span id="progress"></span><span class="clock" id="clock"></span></div><div id="dots" class="dots"></div><div id="intro" class="intro hidden"><h3>Timed exam</h3><p>10 questions · 6 minutes total. Questions appear one at a time. Use Next to submit a response and move on.</p><p>You cannot return to previous questions or check your answers until the exam ends. Unused time remains available for later questions.</p></div><section id="question" class="panel"><p class="instruction">Make an appropriate sentence.</p><div class="bubbleRow"><span class="face" aria-label="First speaker">👩🏻‍🎓</span><div id="prompt" class="bubble"></div></div><div class="bubbleRow"><span class="face two" aria-label="Second speaker">👨🏽‍🎓</span><div id="reply" class="bubble reply"></div></div><div class="bankhead">WORD BANK · TAP OR DRAG</div><div id="bank" class="bank"></div><p class="help">Tap chunks to fill the next blank. Tap a filled blank to remove it. You can also drag chunks into blanks.</p></section><div class="buttons"><button id="check" class="btn primary">Check answer</button><button id="clear" class="btn">Clear</button><button id="prev" class="btn">← Previous</button><button id="next" class="btn primary">Next →</button><button id="start" class="btn primary hidden">Start exam</button><button id="finish" class="btn hidden">Finish exam early</button><button id="restart" class="btn hidden">Try again</button></div><div id="feedback" class="feedback hidden"></div><div id="results" class="results hidden"></div><div class="foot">Independent TOEFL-style practice · Not affiliated with ETS · 6-minute timer is an approximate practice allocation.</div></div></div>`;
-const $=id=>root.getElementById(id);
-const RAW=[
-{prompt:'The career fair last night was very impressive.',answer:'Can you tell me whether it will be held again next month?',parts:['Can',null,null,null,null,null,null,null,'?'],chunks:['you tell','me','whether','it will be','held again','next','month'],grammar:'Embedded yes/no question',explain:'After “Can you tell me whether,” the clause uses statement word order: “it will be held,” not “will it be held.”'},
-{prompt:'I finished reading the book you lent me.',answer:'Can I have it back now?',parts:[null,null,null,null,null,'now','?'],chunks:['Can','I','have','it','back'],grammar:'Modal yes/no question',explain:'Use “Can + subject + base verb” to make a request: “Can I have…?”'},
-{prompt:'I have a job interview scheduled for Tuesday for a new research assistant position.',answer:'Can you tell me whether you prepared your answers in advance?',parts:['Can you',null,null,null,null,null,null,'?'],chunks:['tell me','whether you','prepared','your','answers in','advance'],grammar:'Embedded yes/no question',explain:'After “whether,” use statement word order. The question is “Can you tell me…?” not “whether did you prepare…?”'},
-{prompt:'What did that girl just ask you?',answer:'She wanted to know what chapters were covered in our seminar.',parts:[null,null,'what',null,null,null,null,'.'],chunks:['She','wanted to know','chapters','were covered','in','our seminar'],grammar:'Embedded wh-question + passive voice',explain:'In “what chapters were covered,” the noun phrase “what chapters” is the subject of a passive clause.'},
-{prompt:'The seminar on modern art was fascinating.',answer:'Do you know if they will hold another session soon?',parts:[null,null,null,null,null,null,'soon','?'],chunks:['Do you','know','if','they','will hold','another session'],grammar:'Embedded yes/no question',explain:'After “if,” the clause has statement order: “they will hold,” not “will they hold.”'},
-{prompt:"I'm thinking about moving off campus next semester.",answer:'Have you found a place you like?',parts:['Have',null,null,null,null,null,'?'],chunks:['you','found','a','place','you like'],grammar:'Present perfect question + relative clause',explain:'Present perfect questions use “Have + subject + past participle.” “You like” identifies the place without an expressed relative pronoun.'},
-{prompt:'I heard there was a new photography exhibition at the university last Sunday.',answer:'Did you also happen to attend it?',parts:['Did',null,null,null,null,'?'],chunks:['you','also','happen to','attend it'],grammar:'Past simple question + verb pattern',explain:'After “did,” use the base verb “happen”; “happen to” is followed by another base verb.'},
-{prompt:'When will the Science Department meeting start?',answer:'I need to find out when everyone is available to meet.',parts:[null,null,null,'when everyone',null,null,'.'],chunks:['I need','to find','out','is available','to meet'],grammar:'Embedded wh-clause',explain:'The embedded clause follows statement order: “when everyone is available,” not “when is everyone available.”'},
-{prompt:"I've decided to study sculpture at my university.",answer:"Do you have all the supplies you'll need?",parts:['Do',null,null,null,null,null,null,'?'],chunks:['you','have','all','the','supplies',"you'll need"],grammar:'Present simple question + relative clause',explain:'“Do + subject + base verb” makes the main question. “You’ll need” modifies “supplies” as a relative clause.'},
-{prompt:'What time does the cafeteria close on Mondays?',answer:"The cafeteria closes at 7 o'clock on Mondays.",parts:[null,null,null,null,null,null,null,'.'],chunks:['The','cafeteria','closes','at',"7 o'clock",'on','Mondays'],grammar:'Present simple + time expressions',explain:'Use present simple for regular schedules, followed by the time and “on + day(s).”'}
+'use strict';
+const {questions: bank, guide} = JSON.parse(document.getElementById('data').textContent);
+const $ = id => document.getElementById(id);
+const categories = [...new Set(bank.map(q => q.category))].sort((a,b) => a.localeCompare(b));
+const tests = [...new Set(bank.map(q => q.test))].sort((a,b) => a-b);
+const used = new Map();
+const practiceTargetSeconds = 35;
+const mixedTestSeconds = 360;
+const mixedTests = [
+  ['117-05','20-08','22-08','22-01','10-04','118-08','23-06','24-02','22-06','24-01'],
+  ['10-03','20-03','118-03','22-04','24-08','23-07','117-04','20-05','118-06','22-10'],
+  ['23-10','24-03','118-07','117-10','22-05','20-07','20-10','22-02','118-02','23-05'],
+  ['22-03','20-04','23-04','20-01','10-10','24-05','10-09','23-09','24-06','24-07'],
+  ['117-07','11-10','23-01','24-04','20-06','22-09','10-08','24-09','23-03','23-08'],
 ];
+const questionsById = new Map(bank.map(q => [q.id, q]));
+const progressKey = 'dasha-english.build-a-sentence.mixed.v1';
+let state;
+let interval;
+let progress = {attempts:[]};
+let browserStorage = true;
+let lastReviewWasMixed = false;
 
-const questions=RAW.map((q,i)=>{let n=0;const parts=q.parts.map(p=>p===null?{kind:'slot',n:n++}:{kind:/^[?.!]$/.test(p)?'punct':'fixed',text:p});if(n!==q.chunks.length)throw Error('Invalid question '+i);return {...q,parts,tiles:q.chunks.map((t,j)=>({id:j,text:t})),correct:q.chunks.map((_,j)=>j)};});
-function mix(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}if(n>1&&a.every((v,i)=>v===i))[a[0],a[1]]=[a[1],a[0]];return a}
-function makeOrders(){return questions.map(q=>mix(q.tiles.length))}
-let orders=makeOrders(),answers=questions.map(q=>Array(q.tiles.length).fill(null)),checks=Array(questions.length).fill(false),mode='practice',index=0,phase='ready',remaining=360,deadline=0,interval=null;
-function stop(){if(interval!==null)clearInterval(interval);interval=null}
-function reset(nextMode){stop();mode=nextMode;orders=makeOrders();answers=questions.map(q=>Array(q.tiles.length).fill(null));checks=Array(questions.length).fill(false);index=0;phase=mode==='exam'?'ready':'active';remaining=360;render()}
-function locked(){return phase==='done'||(mode==='exam'&&phase!=='active')||(mode==='practice'&&checks[index])}
-function correct(i){return answers[i].every((v,j)=>v===j)}
-function textOf(id){return questions[index].tiles[id]?.text||''}
-function assign(id,pos){if(locked())return;const a=answers[index];const old=a.indexOf(id);const displaced=a[pos];if(old===pos)return;if(old>=0)a[old]=displaced??null;a[pos]=id;render()}
-function remove(pos){if(locked())return;answers[index][pos]=null;render()}
-function clockTick(){remaining=Math.max(0,(deadline-Date.now())/1000);$('clock').textContent=formatTime(remaining);$('clock').classList.toggle('low',remaining<=45);if(remaining<=0)finish()}
-function formatTime(n){const s=Math.ceil(n);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-function finish(){if(phase==='done')return;phase='done';stop();render()}
-function next(){if(mode==='exam'){if(index===questions.length-1)finish();else{index++;render()}return}index=Math.min(index+1,questions.length-1);render()}
-function dragStart(e,id){if(locked()||e.button!==0)return;const x=e.clientX,y=e.clientY;let ghost=null,moved=false;const mv=ev=>{if(!moved&&Math.hypot(ev.clientX-x,ev.clientY-y)>7){moved=true;ghost=document.createElement('div');ghost.className='dragGhost';ghost.textContent=textOf(id);root.appendChild(ghost)}if(ghost){ghost.style.left=ev.clientX+10+'px';ghost.style.top=ev.clientY+10+'px'}};const end=ev=>{window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',end);window.removeEventListener('pointercancel',end);const target=root.elementFromPoint?.(ev.clientX,ev.clientY)?.closest('.slot');ghost?.remove();if(moved&&target)assign(id,Number(target.dataset.slot))};window.addEventListener('pointermove',mv);window.addEventListener('pointerup',end);window.addEventListener('pointercancel',end)}
-function render(){const q=questions[index],a=answers[index],isDone=phase==='done',exam=mode==='exam',canEdit=!locked();$('practice').classList.toggle('active',!exam);$('exam').classList.toggle('active',exam);$('clock').textContent=exam?formatTime(remaining):'Untimed';$('clock').classList.toggle('low',exam&&remaining<=45&&phase==='active');$('progress').textContent=isDone?'Exam finished · '+questions.filter((_,i)=>correct(i)).length+' / '+questions.length+' correct':'Question '+(index+1)+' of '+questions.length+' · '+(exam?'Exam mode':'Practice mode');$('intro').classList.toggle('hidden',!(exam&&phase==='ready'));$('question').classList.toggle('hidden',exam&&phase!=='active'||isDone);$('dots').classList.toggle('hidden',isDone);$('dots').replaceChildren();questions.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.textContent=i+1;b.className=(i===index?'now ':'')+(answers[i].every(v=>v!==null)?'completed':'');b.disabled=exam||phase!=='active';b.title=exam?'Exam questions are sequential':'Go to question '+(i+1);b.onclick=()=>{index=i;render()};$('dots').append(b)});$('prompt').textContent=q.prompt;$('reply').replaceChildren();q.parts.forEach(p=>{if(p.kind!=='slot'){let sp=document.createElement('span');sp.className=p.kind==='punct'?'punct':'static';sp.textContent=p.text;$('reply').append(sp);return}const b=document.createElement('button');b.type='button';b.dataset.slot=p.n;b.className='slot'+(a[p.n]!==null?' filled':'');b.textContent=a[p.n]===null?'_____':textOf(a[p.n]);b.disabled=!canEdit;b.onclick=()=>remove(p.n);if(!exam&&checks[index])b.classList.add(a[p.n]===p.n?'correct':'incorrect');$('reply').append(b)});$('bank').replaceChildren();orders[index].forEach(id=>{const b=document.createElement('button');b.type='button';b.className='tile'+(a.includes(id)?' used':'');b.textContent=q.tiles[id].text;b.disabled=!canEdit||a.includes(id);b.onclick=()=>{const pos=a.indexOf(null);if(pos>=0)assign(id,pos)};b.addEventListener('pointerdown',e=>dragStart(e,id));$('bank').append(b)});$('check').classList.toggle('hidden',exam||isDone);$('check').disabled=!canEdit||a.some(v=>v===null);$('clear').classList.toggle('hidden',isDone||exam&&phase==='ready');$('clear').disabled=!canEdit;$('prev').classList.toggle('hidden',exam||isDone);$('prev').disabled=index===0;$('next').classList.toggle('hidden',isDone||exam&&phase==='ready');$('next').textContent=exam?(index===questions.length-1?'Submit exam':'Next →'):'Next →';$('next').disabled=!canEdit||!exam&&index===questions.length-1;$('start').classList.toggle('hidden',!(exam&&phase==='ready'));$('finish').classList.toggle('hidden',!(exam&&phase==='active'));$('restart').classList.toggle('hidden',!isDone);$('feedback').classList.toggle('hidden',exam||!checks[index]||isDone);if(!exam&&checks[index]){$('feedback').replaceChildren();const h=document.createElement('strong');h.textContent=(correct(index)?'✓ Correct':'✕ Not quite')+' · '+q.grammar;const p=document.createElement('p');p.textContent='Answer: '+q.answer;const x=document.createElement('p');x.textContent=q.explain;$('feedback').append(h,p,x)}$('results').classList.toggle('hidden',!isDone);if(isDone){$('results').replaceChildren();questions.forEach((q,i)=>{const div=document.createElement('div');div.className='result';const h=document.createElement('b');h.className=correct(i)?'':'warn';h.textContent=(correct(i)?'✓':'✕')+' Question '+(i+1);const p=document.createElement('span');p.textContent=q.answer;div.append(h,p);$('results').append(div)})}}
-$('practice').onclick=()=>reset('practice');$('exam').onclick=()=>reset('exam');$('check').onclick=()=>{checks[index]=true;render()};$('clear').onclick=()=>{answers[index].fill(null);render()};$('prev').onclick=()=>{index=Math.max(0,index-1);render()};$('next').onclick=next;$('start').onclick=()=>{phase='active';deadline=Date.now()+remaining*1000;interval=setInterval(clockTick,200);render()};$('finish').onclick=finish;$('restart').onclick=()=>reset(mode);document.addEventListener('visibilitychange',()=>{if(phase==='active'&&mode==='exam')clockTick()});window.addEventListener('pagehide',stop);reset('practice');
-})();
-</script></body></html>
+function loadProgress() {
+  if (!browserStorage) return;
+  try {
+    const saved = localStorage.getItem(progressKey);
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (!Array.isArray(data.attempts)) throw new Error('Invalid history');
+      progress = data;
+    }
+  } catch {
+    browserStorage = false;
+  }
+}
+
+function saveProgress() {
+  if (!browserStorage) return;
+  try {
+    localStorage.setItem(progressKey, JSON.stringify(progress));
+  } catch {
+    browserStorage = false;
+  }
+}
+
+function shuffle(items) {
+  const copy = [...items];
+  for (let i = copy.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [copy[i],copy[j]] = [copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function unique(items) {
+  const seen = new Set();
+  return items.filter(item => !seen.has(item.key) && seen.add(item.key));
+}
+
+function round(pool, count, previous) {
+  const shuffled = shuffle(pool);
+  const fresh = shuffled.filter(q => !previous.has(q.key));
+  const repeats = shuffled.filter(q => previous.has(q.key));
+  return [...fresh, ...repeats].slice(0,count);
+}
+
+function markSeen(previous, questions, pool, count) {
+  const unseen = pool.filter(q => !previous.has(q.key)).length;
+  const next = unseen < count ? new Set() : new Set(previous);
+  questions.forEach(q => next.add(q.key));
+  return next;
+}
+
+function visible(section) {
+  for (const id of ['home','session','review']) $(id).hidden = id !== section;
+}
+
+function fillGroups() {
+  const byTest = $('practice-kind').value === 'test';
+  $('group-label').textContent = byTest ? 'Source test' : 'Grammar category';
+  $('group').replaceChildren(...(byTest ? tests : categories).map(group => {
+    const count = bank.filter(q => byTest ? q.test === group : q.category === group).length;
+    return new Option((byTest ? 'Test ' : '') + group + ' (' + count + ')', group);
+  }));
+}
+
+function start(testNumber = 0) {
+  clearInterval(interval);
+  const mixed = testNumber > 0;
+  if (mixed) loadProgress();
+  const byTest = $('practice-kind').value === 'test';
+  const group = $('group').value;
+  const source = bank.filter(q => String(q.test) === group).sort((a,b) => a.number-b.number);
+  const sortedPool = unique(bank.filter(q => q.category === group).sort((a,b) => Number(b.timed)-Number(a.timed)));
+  const seen = used.get(group) || new Set();
+  const questions = mixed ? mixedTests[testNumber-1].map(id => questionsById.get(id))
+    : byTest ? source : round(sortedPool, 8, seen);
+  if (!mixed && !byTest) used.set(group, markSeen(seen, questions, sortedPool, 8));
+  state = {mixed, testNumber, byTest, questions, i:0, selected: null, started:Date.now(), entered:Date.now(),
+    timed:!mixed && $('pace').value === 'target', ended:false, items:questions.map(q => ({
+      answers:q.chunks.map(() => null), order:shuffle(q.chunks.map((_,i) => i)), checked:false, elapsed:0
+    }))};
+  visible('session');
+  render();
+  interval = setInterval(updateClock, 150);
+}
+
+function current() { return [state.questions[state.i], state.items[state.i]]; }
+const normalize = value => value.replace(/[’‘]/g,"'").toLocaleLowerCase('en');
+function correct(q,item) {
+  return item.answers.every((answer,i) => answer !== null && normalize(q.chunks[answer]) === normalize(q.chunks[i]));
+}
+function joined(q,item) {
+  const sentence = q.layout.map(p => typeof p === 'string' ? p : item.answers[p] === null ? '___' : q.chunks[item.answers[p]]).join(' ') + q.punctuation;
+  return sentence.replace(/^\p{L}/u, letter => letter.toLocaleUpperCase('en'));
+}
+function button(text, action, className = '') {
+  const node = document.createElement('button');
+  node.type = 'button';
+  node.textContent = text;
+  node.className = className;
+  node.addEventListener('click',action);
+  return node;
+}
+function line(text, parent) {
+  const p = document.createElement('p');
+  p.textContent = text;
+  parent.append(p);
+}
+
+function render() {
+  const [q,item] = current();
+  const testLabel = state.mixed ? 'Mixed Test ' + state.testNumber + ' · ' : '';
+  $('position').textContent = testLabel + 'Question ' + (state.i+1) + ' of ' + state.questions.length;
+  $('prompt').textContent = q.prompt;
+  $('numbers').replaceChildren(...state.items.map((entry,i) => {
+    const node = button(i+1, () => go(i), entry.answers.every(v => v !== null) ? 'done' : '');
+    node.setAttribute('aria-label','Question ' + (i+1));
+    if (i === state.i) node.setAttribute('aria-current','step');
+    return node;
+  }));
+  $('builder').replaceChildren(...q.layout.map(part => {
+    if (typeof part === 'string') {
+      const fixed = document.createElement('span');
+      fixed.textContent = part;
+      return fixed;
+    }
+    const value = item.answers[part];
+    const node = button(value === null ? '____' : q.chunks[value], () => {
+      if (value !== null) item.answers[part] = null;
+      state.selected = part;
+      item.checked = false;
+      render();
+      $('builder').querySelectorAll('button')[part]?.focus();
+    }, value === null ? 'slot' : 'slot filled');
+    node.setAttribute('aria-label','Blank ' + (part+1) + (value === null ? '' : ', ' + q.chunks[value]));
+    node.setAttribute('aria-pressed', String(state.selected === part));
+    return node;
+  }));
+  $('builder').append(q.punctuation);
+  $('tiles').replaceChildren(...item.order.map(i => {
+    const node = button(q.chunks[i], () => {
+      const slot = state.selected ?? item.answers.indexOf(null);
+      if (slot < 0 || item.answers[slot] !== null) return;
+      item.answers[slot] = i;
+      state.selected = null;
+      item.checked = false;
+      render();
+      ($('tiles').querySelector('button:not([hidden]):not([disabled])') || (state.mixed ? $('next') : $('check'))).focus();
+    }, 'tile');
+    node.hidden = item.answers.includes(i);
+    node.disabled = item.answers.every(value => value !== null);
+    return node;
+  }));
+  $('back').disabled = state.i === 0;
+  $('clear').disabled = item.answers.every(value => value === null);
+  $('check').hidden = state.mixed;
+  $('check').disabled = item.answers.includes(null);
+  $('next').hidden = state.i === state.questions.length-1;
+  $('submit').textContent = state.mixed ? 'Submit test' : 'Finish & review';
+  $('feedback').hidden = !item.checked;
+  $('feedback').replaceChildren();
+  if (item.checked) {
+    line(correct(q,item) ? 'Correct.' : 'Expected answer: ' + q.answer, $('feedback'));
+    line('Grammar: ' + q.category + '.', $('feedback'));
+    if (guide[q.category]) line(guide[q.category], $('feedback'));
+  }
+  updateClock();
+}
+
+function go(index) {
+  current()[1].elapsed += Date.now() - state.entered;
+  state.entered = Date.now();
+  state.i = index;
+  state.selected = null;
+  render();
+  $('numbers').querySelector('[aria-current]')?.focus();
+}
+function clock(seconds) {
+  return Math.floor(seconds/60) + ':' + String(seconds%60).padStart(2,'0');
+}
+function updateClock() {
+  if (!state || state.ended) return;
+  const node = $('clock');
+  if (state.mixed) {
+    const left = Math.max(0, Math.ceil((mixedTestSeconds*1000 - Date.now() + state.started)/1000));
+    node.textContent = clock(left);
+    node.classList.toggle('over',left <= 30);
+    if (!left) finish(true);
+  } else {
+    const elapsed = Math.floor((current()[1].elapsed + Date.now() - state.entered)/1000);
+    const left = practiceTargetSeconds - elapsed;
+    node.textContent = state.timed ? (left < 0 ? '+' : '') + clock(Math.abs(left)) : 'Untimed';
+    node.classList.toggle('over',state.timed && left < 0);
+  }
+}
+
+function finish(expired) {
+  if (state.ended) return;
+  state.ended = true;
+  clearInterval(interval);
+  const mode = state.mixed ? 'Mixed Test' : state.byTest ? 'Source Test Practice' : 'Practice by Grammar';
+  const items = state.questions.map((q,i) => {
+    const entry = state.items[i];
+    const blank = entry.answers.every(value => value === null);
+    const status = blank ? 'skipped' : correct(q,entry) ? 'correct' : 'incorrect';
+    return {status, category:q.category, prompt:q.prompt, answer:q.answer,
+      response:status === 'incorrect' ? joined(q,entry) : ''};
+  });
+  const report = {mode, mixed:state.mixed, items, expired};
+  if (state.mixed) {
+    loadProgress();
+    report.testNumber = state.testNumber;
+    report.completedAt = Date.now();
+    progress.attempts.push(report);
+    saveProgress();
+  }
+  showReview(report);
+}
+
+function mixedLabel(report) {
+  return report.testNumber ? 'Mixed Test ' + report.testNumber : 'Random set ' + report.number;
+}
+
+function showReview(report) {
+  lastReviewWasMixed = report.mixed;
+  $('again').textContent = report.mixed ? 'Choose a mixed test' : 'Try another set';
+  const sections = {incorrect:$('mistakes'), skipped:$('skipped'), correct:$('correct-answers')};
+  Object.values(sections).forEach(section => section.replaceChildren());
+  const counts = {incorrect:0, skipped:0, correct:0};
+  report.items.forEach(({status, category, prompt, answer, response},i) => {
+    counts[status]++;
+    const row = document.createElement('li');
+    line('Q' + (i+1) + ' · ' + category, row);
+    row.firstElementChild.className = 'result-item-title';
+    if (status !== 'correct') line(prompt,row);
+    if (status === 'incorrect') line('Your answer: ' + response,row);
+    line('Correct answer: ' + answer,row);
+    sections[status].append(row);
+  });
+  $('result').textContent = counts.correct + ' of ' + report.items.length + ' correct';
+  const label = report.mixed ? mixedLabel(report) : report.mode;
+  $('result-note').textContent = label + ' · ' + counts.incorrect + ' incorrect · ' + counts.skipped + ' skipped' + (report.expired ? ' · Time is up' : '');
+  $('no-mistakes').hidden = counts.incorrect > 0;
+  $('skipped-title').textContent = 'Skipped questions (' + counts.skipped + ')';
+  $('correct-title').textContent = 'Correct answers (' + counts.correct + ')';
+  $('skipped-review').hidden = counts.skipped === 0;
+  $('skipped-review').open = counts.incorrect === 0 && counts.skipped > 0;
+  $('correct-review').hidden = counts.correct === 0;
+  $('correct-review').open = false;
+  visible('review');
+  $('result').focus();
+}
+
+function showHistory() {
+  loadProgress();
+  const selected = $('mixed-set').value;
+  const completed = new Set(progress.attempts.map(report => report.testNumber));
+  $('mixed-set').replaceChildren(...mixedTests.map((_,index) => {
+    const number = index+1;
+    return new Option('Mixed Test ' + number + (completed.has(number) ? ' · Completed' : ''), number);
+  }));
+  const firstNew = mixedTests.findIndex((_,index) => !completed.has(index+1)) + 1;
+  $('mixed-set').value = selected || String(firstNew || 1);
+  $('history-note').textContent = !browserStorage ? 'This browser could not save history. Results are available while this page stays open.'
+    : progress.attempts.length ? 'Completed tests are saved in this browser.' : 'Your completed mixed tests will appear here.';
+  $('history-items').replaceChildren(...[...progress.attempts].reverse().map(report => {
+    const row = document.createElement('li');
+    const date = new Date(report.completedAt).toLocaleString(undefined, {dateStyle:'medium', timeStyle:'short'});
+    const score = report.items.filter(item => item.status === 'correct').length;
+    row.append(button(mixedLabel(report) + ' · ' + score + '/' + report.items.length + ' · ' + date, () => showReview(report)));
+    return row;
+  }));
+}
+function home() {
+  clearInterval(interval);
+  showHistory();
+  visible('home');
+  $('start-practice').focus();
+}
+
+$('bank-size').textContent = bank.length + ' questions across ' + categories.length + ' grammar categories.';
+$('practice-kind').addEventListener('change',fillGroups);
+$('start-practice').onclick = () => start();
+$('start-mixed').onclick = () => start(Number($('mixed-set').value));
+$('check').onclick = () => { current()[1].checked = true; render(); };
+$('clear').onclick = () => {
+  const entry = current()[1];
+  entry.answers.fill(null);
+  entry.checked = false;
+  state.selected = null;
+  render();
+};
+$('back').onclick = () => go(state.i-1);
+$('next').onclick = () => go(state.i+1);
+$('submit').onclick = () => finish(false);
+$('exit').onclick = home;
+$('review-home').onclick = home;
+$('again').onclick = () => {
+  if (lastReviewWasMixed) {
+    home();
+    $('mixed-set').focus();
+  } else start();
+};
+fillGroups();
+showHistory();
+</script>
+</html>
