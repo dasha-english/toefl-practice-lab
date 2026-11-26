@@ -119,4 +119,4 @@ el('copyBtn').onclick=async()=>{let bad=report().filter(x=>!x.correct);let conte
 // Migrate one saved attempt from the earlier version if available.
 try{if(!localStorage.getItem(STORE)){const old=JSON.parse(localStorage.getItem(LEGACY_STORE));if(old&&['practice','timed'].includes(old.mode)&&old.answers&&old.submitted){localStorage.setItem(STORE,JSON.stringify({[old.mode]:old}))}}}catch(e){}
 mode('practice');
-</script></body></html>
+</script><script defer src="../assets/back-navigation.js"></script></body></html>
