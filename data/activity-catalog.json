@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0",
+  "tagging_policy": "All new practice items must have stable id, skill, format, topic, subtopic, difficulty, difficulty_type, target_words, collection, status, related_activities. Difficulty is an estimate unless calibrated from learner responses.",
+  "allowed_tags": {
+    "skill": [
+      "reading",
+      "listening",
+      "speaking",
+      "writing",
+      "vocabulary",
+      "grammar"
+    ],
+    "topic": [
+      "education",
+      "technology",
+      "society",
+      "environment",
+      "health",
+      "science",
+      "history",
+      "business",
+      "culture"
+    ],
+    "difficulty": [
+      "A2",
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ],
+    "difficulty_type": [
+      "editorial-estimate",
+      "pilot-calibrated"
+    ],
+    "status": [
+      "original-practice",
+      "official-reference"
+    ]
+  },
+  "activities": [
+    {
+      "id": "en-em-verbs-vocabulary",
+      "title": "EN–/EM– Academic Verbs",
+      "path": "trainers/en-em-verbs-vocabulary.html",
+      "collection": "en-em-verbs",
+      "skill": "vocabulary",
+      "format": "vocabulary-sentences",
+      "topic": [
+        "education",
+        "technology",
+        "society",
+        "environment",
+        "health",
+        "science"
+      ],
+      "difficulty": [
+        "B2",
+        "C1"
+      ],
+      "difficulty_type": "editorial-estimate",
+      "target_words": [
+        "enhance",
+        "enrich",
+        "enlarge",
+        "endanger",
+        "enable",
+        "empower",
+        "encourage",
+        "entitle",
+        "ensure",
+        "enforce",
+        "enact",
+        "entrench",
+        "embed",
+        "enclose",
+        "encompass",
+        "embody",
+        "encode",
+        "encapsulate"
+      ],
+      "status": "original-practice",
+      "related_activities": [
+        "en-em-mini-c-tests",
+        "en-em-speaking-question-bank"
+      ]
+    },
+    {
+      "id": "en-em-mini-c-tests",
+      "title": "EN–/EM– Mini C-Tests",
+      "path": "trainers/en-em-mini-c-tests.html",
+      "collection": "en-em-verbs",
+      "skill": "reading",
+      "format": "mini-c-test",
+      "topic": [
+        "education",
+        "technology",
+        "society",
+        "environment",
+        "science"
+      ],
+      "difficulty": [
+        "B2",
+        "C1"
+      ],
+      "difficulty_type": "editorial-estimate",
+      "target_words": [
+        "enhance",
+        "enrich",
+        "enlarge",
+        "endanger",
+        "enable",
+        "empower",
+        "encourage",
+        "entitle",
+        "ensure",
+        "enforce",
+        "enact",
+        "entrench",
+        "embed",
+        "enclose",
+        "encompass",
+        "embody",
+        "encode",
+        "encapsulate"
+      ],
+      "status": "original-practice",
+      "related_activities": [
+        "en-em-verbs-vocabulary",
+        "en-em-speaking-question-bank"
+      ]
+    },
+    {
+      "id": "en-em-speaking-question-bank",
+      "title": "EN–/EM– Speaking Question Bank",
+      "path": "trainers/en-em-speaking-question-bank.html",
+      "collection": "en-em-verbs",
+      "skill": "speaking",
+      "format": "take-an-interview",
+      "topic": [
+        "education",
+        "technology",
+        "society",
+        "environment"
+      ],
+      "difficulty": [
+        "B2",
+        "C1"
+      ],
+      "difficulty_type": "editorial-estimate",
+      "target_words": [
+        "enhance",
+        "enrich",
+        "enlarge",
+        "endanger",
+        "enable",
+        "empower",
+        "encourage",
+        "entitle",
+        "ensure",
+        "enforce",
+        "enact",
+        "entrench",
+        "embed",
+        "enclose",
+        "encompass",
+        "embody",
+        "encode",
+        "encapsulate"
+      ],
+      "status": "original-practice",
+      "related_activities": [
+        "en-em-verbs-vocabulary",
+        "en-em-mini-c-tests"
+      ]
+    }
+  ]
+}
