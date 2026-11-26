@@ -36,4 +36,4 @@ function drawResults(){const d=DATA[current],s=states[current];let correct=0;con
 function escapeHtml(str){return str.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function go(i){pause(states[current]);current=i;render();window.scrollTo({top:0,behavior:'smooth'})}
 $('submit').addEventListener('click',()=>{let s=states[current];pause(s);s.finished=true;render();$('results').scrollIntoView({behavior:'smooth',block:'nearest'})});$('restart').addEventListener('click',()=>{const d=DATA[current];states[current]={entries:d.answers.map(a=>Array(a.length-Math.floor(a.length/2)).fill('')),elapsed:0,lastStart:null,finished:false};render()});$('prev').addEventListener('click',()=>go(current-1));$('next').addEventListener('click',()=>go(current+1));setInterval(refresh,250);document.addEventListener('visibilitychange',()=>{const s=states[current];if(document.hidden)pause(s);else resume(s)});render();
-</script></body></html>
+</script><script defer src="../assets/back-navigation.js"></script></body></html>
